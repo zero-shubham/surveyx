@@ -1,0 +1,3 @@
+[submodule "orgsvc"]
+	path = orgsvc
+	url = https://github.com/zero-shubham/orgsvc
