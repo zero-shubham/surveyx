@@ -1,3 +1,6 @@
 [submodule "orgsvc"]
 	path = orgsvc
 	url = https://github.com/zero-shubham/orgsvc
+[submodule "authsvc"]
+	path = authsvc
+	url = git@github.com:zero-shubham/authsvc.git
