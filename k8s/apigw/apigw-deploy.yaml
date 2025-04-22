@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: apigw
+  namespace: default
+  labels:
+    app: apigw
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: apigw
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: apigw
+    spec:
+      containers:
+        - name: apigw
+          image: devopsfaith/krakend:2.9
+          ports:
+            - containerPort: 8080
+          args: ["run", "-c", "/etc/krakend/krakend.json"]
+          volumeMounts:
+            - name: krakend-config
+              mountPath: /etc/krakend
+            - name: krakend-proto
+              mountPath: /etc/krakend/proto
+              
+      volumes:
+        - name: krakend-config
+          configMap:
+            name: krakend-config
+        - name: krakend-proto
+          configMap:
+            name: krakend-proto
