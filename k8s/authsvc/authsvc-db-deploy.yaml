@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: authsvc-db
   namespace: default
@@ -31,8 +31,12 @@ spec:
           volumeMounts:
             - name: db-data
               mountPath: /var/lib/postgresql/data
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "pg_ctl -D /var/lib/authsvc/pgdata -w -t 60 -m fast stop"]
       volumes:
         - name: db-data
           hostPath:
-            path: /var/lib/pgdata
+            path: /var/lib/authsvc/pgdata
             type: DirectoryOrCreate

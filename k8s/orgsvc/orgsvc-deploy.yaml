@@ -31,9 +31,3 @@ spec:
               value: 'console,otlp'
           ports:
             - containerPort: 8000
-
-      volumes:
-        - name: db-data
-          hostPath:
-            path: /var/lib/pgdata
-            type: DirectoryOrCreate

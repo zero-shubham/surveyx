@@ -21,8 +21,14 @@ spec:
           env:
             - name: DATABASE_URL
               value: 'postgresql://postgres:postgres@authsvc-db:30543/datab'
+            - name: SUPERADMIN_EMAIL
+              value: "superadmin@surveyx.com"
+            - name: SUPERADMIN_PASS
+              value: "123456"
           ports:
             - containerPort: 50050
+          command: ["/bin/sh","-c"]
+          args: ["go run ./cmd/seed/main.go; sleep 10; go run ./cmd/server/main.go"]
 
       initContainers:
         - name: authsvc-migrate
@@ -31,16 +37,4 @@ spec:
             - name: DATABASE_URL
               value: 'postgresql://postgres:postgres@authsvc-db:30543/datab?sslmode=disable'
           args:
-            [
-              '-path',
-              '/tmp',
-              '-database',
-              '$(DATABASE_URL)',
-              '-verbose',
-              'up',
-            ]
-      volumes:
-        - name: db-data
-          hostPath:
-            path: /var/lib/pgdata
-            type: DirectoryOrCreate
+            ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up']
