@@ -20,27 +20,25 @@ spec:
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
-              value: "postgresql://postgres:postgres@authsvc-db:5432/datab"
+              value: 'postgresql://postgres:postgres@authsvc-db:30543/datab'
           ports:
-            - containerPort: 8000
+            - containerPort: 50050
 
-        - name: authsvc-db
-          image: postgres:15
+      initContainers:
+        - name: authsvc-migrate
+          image: localhost:32000/authsvc-migrate:registry
           env:
-            - name: POSTGRES_HOST_AUTH_METHOD
-              value: trust
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: postgres
-            - name: POSTGRES_DB
-              value: datab
-          ports:
-            - containerPort: 5432
-          volumeMounts:
-            - name: db-data
-              mountPath: /var/lib/postgresql/data
-              
+            - name: DATABASE_URL
+              value: 'postgresql://postgres:postgres@authsvc-db:30543/datab?sslmode=disable'
+          args:
+            [
+              '-path',
+              '/tmp',
+              '-database',
+              '$(DATABASE_URL)',
+              '-verbose',
+              'up',
+            ]
       volumes:
         - name: db-data
           hostPath:

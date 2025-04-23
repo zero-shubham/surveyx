@@ -20,35 +20,18 @@ spec:
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
-              value: "postgresql+asyncpg://postgres:postgres@orgsvc-db:5432/datab"
+              value: 'postgresql+asyncpg://postgres:postgres@orgsvc-db:30542/datab'
             - name: OTEL_PYTHON_LOG_CORRELATION
-              value: "true"
+              value: 'true'
             - name: OTEL_TRACES_EXPORTER
-              value: "otlp"
+              value: 'otlp'
             - name: OTEL_METRICS_EXPORTER
-              value: "otlp"
+              value: 'otlp'
             - name: OTEL_LOGS_EXPORTER
-              value: "console,otlp"
+              value: 'console,otlp'
           ports:
             - containerPort: 8000
 
-        - name: orgsvc-db
-          image: postgres:15
-          env:
-            - name: POSTGRES_HOST_AUTH_METHOD
-              value: trust
-            - name: POSTGRES_USER
-              value: postgres
-            - name: POSTGRES_PASSWORD
-              value: postgres
-            - name: POSTGRES_DB
-              value: datab
-          ports:
-            - containerPort: 5432
-          volumeMounts:
-            - name: db-data
-              mountPath: /var/lib/postgresql/data
-              
       volumes:
         - name: db-data
           hostPath:

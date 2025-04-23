@@ -25,6 +25,8 @@ spec:
               mountPath: /etc/krakend
             - name: krakend-proto
               mountPath: /etc/krakend/proto
+            - name: krakend-pb
+              mountPath: /etc/krakend/pb
               
       volumes:
         - name: krakend-config
@@ -33,3 +35,7 @@ spec:
         - name: krakend-proto
           configMap:
             name: krakend-proto
+        - name: krakend-pb
+          hostPath:
+            path: /home/zero/Documents/code/surveyx/k8s/apigw/pb/
+            type: Directory

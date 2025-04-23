@@ -8,25 +8,26 @@ data:
   krakend.json: |
     {
       "version": 3,
+       "plugin": {
+        "pattern": ".so",
+        "folder": "/etc/krakend/pb/"
+      },
       "endpoints": [
         {
           "endpoint": "/api/auth/users/token",
           "method": "POST",
-          "output_encoding": "json",
           "backend": [
             {
-              "encoding": "grpc",
-              "host": ["authsvc:8001"],
-              "disable_host_sanitize": true,
-              "sd": "static",
-              "method": "proto.AuthService.UserToken",
-              "tls": {
-                "disable": true
-              },
+              "host": [
+                "http://localhost:8080"
+              ],
+              "url_pattern": "/__debug/",
               "extra_config": {
-                "backend/grpc": {
-                  "proto_path": "/etc/krakend/proto/authsvc.proto",
-                  "proto_package": "proto"
+                "plugin/http-client": {
+                  "name": "krakend-client-example",
+                  "krakend-client-example": {
+                    "path": "/__debug/"
+                  }
                 }
               }
             }
@@ -34,6 +35,13 @@ data:
         }
       ],
       "extra_config": {
+        "grpc-proxy": {
+          "host": "authsvc:50050",
+          "@comment": "The catalog loads all .pb files passed or contained in directories",
+          "catalog": [
+            "/etc/krakend/pb"
+          ]
+        },
         "telemetry/logging": {
           "level": "DEBUG",
           "prefix": "[KRAKEND]",
