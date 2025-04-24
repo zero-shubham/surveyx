@@ -8,3 +8,6 @@ delete:
 
 logs:
 	microk8s kubectl logs deployment/$(dep) --all-containers=true -f
+
+pods:
+	microk8s kubectl get pods

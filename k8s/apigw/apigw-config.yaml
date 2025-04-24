@@ -14,14 +14,14 @@ data:
       },
       "endpoints": [
         {
-          "endpoint": "/api/auth/users/token",
+          "endpoint": "/v1/users/token/",
           "method": "POST",
           "backend": [
             {
               "host": [
-                "http://localhost:8080"
+                "localhost"
               ],
-              "url_pattern": "/__debug/",
+              "url_pattern": "/",
               "extra_config": {
                 "plugin/http-client": {
                   "name": "krakend-client-example",
@@ -32,9 +32,43 @@ data:
               }
             }
           ]
+        },
+        {
+          "endpoint": "/v1/organizations/",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "create:organizations"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+        },
+          "method": "POST",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend":[
+            {
+              "host": ["http://orgsvc:8000"],
+              "url_pattern": "/v1/organizations/",
+              "method":"POST"
+            }
+          ]
         }
       ],
       "extra_config": {
+        "router": {
+            "return_error_msg": true
+        },
+        "auth/validator":{
+          "operation_debug": true
+        },
         "grpc-proxy": {
           "host": "authsvc:50050",
           "@comment": "The catalog loads all .pb files passed or contained in directories",
@@ -55,82 +89,16 @@ data:
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: krakend-proto
+  name: krakend-jwk
 data:
-  authsvc.proto: |
-    syntax = "proto3";
-
-    package grpc;
-
-    option go_package = "github.com/zero-shubham/authsvc/transport/grpc";
-
-    service AuthService {
-      rpc UserToken (UserTokenRequest) returns (TokenResponse);
-      rpc ServiceToken (ServiceTokenRequest) returns(TokenResponse);
-      rpc ExchangeToken(ExchangeTokenRequest ) returns(TokenResponse);
-      rpc CreateUser(UserRequest) returns(UserResponse);
-      rpc UpdateUser(UserRequest) returns(UserResponse);
-      rpc CreateAppGroup(AppGroupRequest) returns(AppGroupResponse);
-      rpc UpdateAppGroup(AppGroupRequest) returns(AppGroupResponse);
-      rpc CreateApp(AppRequest) returns(AppResponse);
-      rpc UpdateApp(AppRequest) returns(AppResponse);
-    }
-
-    message AppRequest{
-      string org_id = 1;
-      string app_group_id =2;
-    }
-
-    message AppResponse{
-      string id = 1;
-      string org_id = 2;
-      string app_group_id = 3;
-    }
-
-    message AppGroupRequest{
-      string id = 1;
-      string org_id = 2;
-      string name = 3;
-      repeated string scopes = 4;
-    }
-
-    message AppGroupResponse{
-      string id = 1;
-      string org_id = 2;
-      string name = 3;
-      repeated string scopes = 4;
-    }
-
-    message UserRequest{
-      string email = 1;
-      string password = 2;
-      string org_id = 3;
-      string app_group_id = 4;
-    }
-
-    message UserResponse{
-      string id = 1;
-      string email = 2;
-      string org_id = 4;
-      string app_group_id = 5;
-    }
-
-    message UserTokenRequest {
-      string email = 1;
-      string password = 2;
-    }
-      
-    message TokenResponse {
-      string access_token = 1;
-      string refresh_token =2;
-    }
-
-    message ServiceTokenRequest{
-      string app_id = 1;
-    }
-
-    message ExchangeTokenRequest{
-      string access_token = 1;
-      string refresh_token = 2;
-      string app_id = 3;
+  symmetric.json: |
+    {
+      "keys": [
+        {
+          "alg": "HS256",
+          "kid": "MDNGMjU2M0U3RERFQUEwOUUzQUMwQ0NBN0Y1RUY0OEIxNTRDM0IxMw",
+          "k": "YXNkZndlZmFzdmRmZzEyM3NkZmczNGFzZw==",
+          "kty": "oct"
+        }
+      ]
     }

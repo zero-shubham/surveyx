@@ -25,8 +25,13 @@ spec:
               value: "superadmin@surveyx.com"
             - name: SUPERADMIN_PASS
               value: "123456"
+            - name: JWT_SIGN_KEY
+              value: "asdfwefasvdfg123sdfg34asg"
           ports:
             - containerPort: 50050
+              name: "grpc-port"
+            - containerPort: 50051
+              name: "jwk-port"
           command: ["/bin/sh","-c"]
           args: ["go run ./cmd/seed/main.go; sleep 10; go run ./cmd/server/main.go"]
 
