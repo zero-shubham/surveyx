@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: apigw
-          image: devopsfaith/krakend:2.9
+          image: krakend:2.9.4
           ports:
             - containerPort: 8080
           args: ["run", "-c", "/etc/krakend/krakend.json"]
@@ -25,8 +25,8 @@ spec:
               mountPath: /etc/krakend
             - name: krakend-jwk
               mountPath: /etc/krakend/jwk
-            - name: krakend-pb
-              mountPath: /etc/krakend/pb
+            - name: krakend-plugin
+              mountPath: /etc/krakend/plugin
               
       volumes:
         - name: krakend-config
@@ -35,7 +35,7 @@ spec:
         - name: krakend-jwk
           configMap:
             name: krakend-jwk
-        - name: krakend-pb
+        - name: krakend-plugin
           hostPath:
-            path: /home/zero/Documents/code/surveyx/k8s/apigw/pb/
+            path: /home/zero/Documents/code/surveyx/surveyx-apigw/
             type: Directory

@@ -10,7 +10,7 @@ data:
       "version": 3,
        "plugin": {
         "pattern": ".so",
-        "folder": "/etc/krakend/pb/"
+        "folder": "/etc/krakend/plugin/"
       },
       "endpoints": [
         {
@@ -21,13 +21,119 @@ data:
               "host": [
                 "localhost"
               ],
-              "url_pattern": "/",
+              "url_pattern": "/v1/users/token/",
               "extra_config": {
                 "plugin/http-client": {
-                  "name": "krakend-client-example",
-                  "krakend-client-example": {
-                    "path": "/__debug/"
-                  }
+                  "name": "krakend-grpc-proxy",
+                  "krakend-grpc-proxy": {}
+                }
+              }
+            }
+          ]
+        },
+        {
+          "endpoint": "/v1/users/",
+          "method": "POST",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "create:users"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+          },
+          "method": "POST",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend": [
+            {
+              "host": [
+                "localhost"
+              ],
+              "url_pattern": "/v1/users/",
+              "extra_config": {
+                "plugin/http-client": {
+                  "name": "krakend-grpc-proxy",
+                  "krakend-grpc-proxy": {}
+                }
+              }
+            }
+          ]
+        },
+        {
+          "endpoint": "/v1/app-groups/",
+          "method": "POST",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "create:app-groups"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+          },
+          "method": "POST",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend": [
+            {
+              "host": [
+                "localhost"
+              ],
+              "url_pattern": "/v1/app-groups/",
+              "extra_config": {
+                "plugin/http-client": {
+                  "name": "krakend-grpc-proxy",
+                  "krakend-grpc-proxy": {}
+                }
+              }
+            }
+          ]
+        },
+        {
+          "endpoint": "/v1/apps/",
+          "method": "POST",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "create:apps"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+          },
+          "method": "POST",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend": [
+            {
+              "host": [
+                "localhost"
+              ],
+              "url_pattern": "/v1/apps/",
+              "extra_config": {
+                "plugin/http-client": {
+                  "name": "krakend-grpc-proxy",
+                  "krakend-grpc-proxy": {}
                 }
               }
             }
@@ -45,7 +151,7 @@ data:
                 "operation_debug": true,
                 "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
             }
-        },
+          },
           "method": "POST",
           "input_query_strings": [
             "*"
@@ -69,12 +175,8 @@ data:
         "auth/validator":{
           "operation_debug": true
         },
-        "grpc-proxy": {
-          "host": "authsvc:50050",
-          "@comment": "The catalog loads all .pb files passed or contained in directories",
-          "catalog": [
-            "/etc/krakend/pb"
-          ]
+        "krakend-grpc-proxy": {
+          "host": "authsvc:50050"
         },
         "telemetry/logging": {
           "level": "DEBUG",

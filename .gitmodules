@@ -4,3 +4,6 @@
 [submodule "authsvc"]
 	path = authsvc
 	url = git@github.com:zero-shubham/authsvc.git
+[submodule "surveyx-apigw"]
+	path = surveyx-apigw
+	url = git@github.com:zero-shubham/surveyx-apigw.git
