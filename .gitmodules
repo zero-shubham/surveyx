@@ -7,3 +7,6 @@
 [submodule "surveyx-apigw"]
 	path = surveyx-apigw
 	url = git@github.com:zero-shubham/surveyx-apigw.git
+[submodule "surveysvc"]
+	path = surveysvc
+	url = git@github.com:zero-shubham/surveysvc.git
