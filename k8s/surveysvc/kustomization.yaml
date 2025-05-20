@@ -6,3 +6,6 @@ resources:
   - surveysvc-db-svc.yaml
   - surveysvc-deploy.yaml
   - surveysvc-svc.yaml 
+  - surveysvc-broker-deploy.yaml
+  - surveysvc-broker-svc.yaml
+  - surveysvc-consumer-deploy.yaml

@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: surveysvc-consumer
+  namespace: default
+  labels:
+    app: surveysvc-consumer
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: surveysvc-consumer
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: surveysvc-consumer
+    spec:
+      containers:
+        - name: surveysvc-consumer
+          image: localhost:32000/surveysvc:registry
+          imagePullPolicy: Always
+          env:
+            - name: DATABASE_URL
+              value: 'postgresql://postgres:postgres@surveysvc-db:30544/datab'
+            - name: KAFKA_BROKER_URI
+              value: 'surveysvc-broker:9092'
+            - name: KAFKA_CONSUMER_TOPIC
+              value: 'surveyx-answers'
+            - name: KAFKA_DEADLETTER_TOPIC
+              value: 'surveyx-answers-dead'
+            - name: KAFKA_CONSUMER_GROUP
+              value: 'surveyx-answers-consumers'
+          ports:
+            - containerPort: 50055
+              name: "http-port"
+          command: ["/bin/sh","-c"]
+          args: ["go run ./cmd/consumer/main.go"]
+
+      # initContainers:
+      #   - name: surveysvc-migrate
+      #     image: localhost:32000/surveysvc-migrate:registry
+      #     env:
+      #       - name: DATABASE_URL
+      #         value: 'postgresql://postgres:postgres@surveysvc-db:30544/datab?sslmode=disable'
+      #     args:
+      #       ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up'] 
