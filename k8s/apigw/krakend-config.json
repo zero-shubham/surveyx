@@ -1,0 +1,513 @@
+{
+  "version": 3,
+  "plugin": {
+    "pattern": ".so",
+    "folder": "/etc/krakend/plugin/"
+  },
+  "endpoints": [
+    {
+      "endpoint": "/v1/users/token/",
+      "method": "POST",
+      "backend": [
+        {
+          "host": ["localhost"],
+          "url_pattern": "/v1/users/token/",
+          "extra_config": {
+            "plugin/http-client": {
+              "name": "krakend-grpc-proxy",
+              "krakend-grpc-proxy": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/users/",
+      "method": "POST",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:users"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["localhost"],
+          "url_pattern": "/v1/users/",
+          "extra_config": {
+            "plugin/http-client": {
+              "name": "krakend-grpc-proxy",
+              "krakend-grpc-proxy": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/app-groups/",
+      "method": "POST",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:app-groups"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["localhost"],
+          "url_pattern": "/v1/app-groups/",
+          "extra_config": {
+            "plugin/http-client": {
+              "name": "krakend-grpc-proxy",
+              "krakend-grpc-proxy": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/apps/",
+      "method": "POST",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:apps"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["localhost"],
+          "url_pattern": "/v1/apps/",
+          "extra_config": {
+            "plugin/http-client": {
+              "name": "krakend-grpc-proxy",
+              "krakend-grpc-proxy": {}
+            }
+          }
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/organizations/",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:organizations"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "POST",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/organizations/",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/organizations/",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:organizations"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/organizations/",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/organizations/:org_id",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:organizations"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/organizations/:org_id",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/organizations/:org_id",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "delete:organizations"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "DELETE",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/organizations/:org_id",
+          "method": "DELETE"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/campaigns/",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:campaigns"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "POST",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/campaigns/",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/campaigns/",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:campaigns"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/campaigns/",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/campaigns/:campaign_id",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:campaigns"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/campaigns/:campaign_id",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/campaigns/:campaign_id",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:campaigns"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "DELETE",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/campaigns/:campaign_id",
+          "method": "DELETE"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/questions/",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:questions"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "POST",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/questions/",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/questions/",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:questions"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/questions/",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/questions/:question_id",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:questions"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/questions/:question_id",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/questions/:question_id",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:questions"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "DELETE",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://orgsvc:8000"],
+          "url_pattern": "/v1/questions/:question_id",
+          "method": "DELETE"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/question-mappings",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:question-mappings"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "POST",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://surveysvc:50052"],
+          "url_pattern": "/v1/question-mappings",
+          "method": "POST"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/question-mappings",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:question-mappings"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://surveysvc:50052"],
+          "url_pattern": "/v1/question-mappings",
+          "method": "GET"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/question-mappings",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "update:question-mappings"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "PATCH",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://surveysvc:50052"],
+          "url_pattern": "/v1/question-mappings/:id",
+          "method": "PATCH"
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/answers",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "read:answers"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        }
+      },
+      "method": "GET",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["http://surveysvc:50052"],
+          "url_pattern": "/v1/answers",
+          "method": "GET"
+        }
+      ]
+    }
+  ],
+  "extra_config": {
+    "router": {
+      "return_error_msg": true
+    },
+    "auth/validator": {
+      "operation_debug": true
+    },
+    "krakend-grpc-proxy": {
+      "host": "authsvc:50050"
+    },
+    "telemetry/logging": {
+      "level": "DEBUG",
+      "prefix": "[KRAKEND]",
+      "syslog": false,
+      "stdout": true
+    }
+  }
+}
