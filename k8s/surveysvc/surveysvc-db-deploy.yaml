@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: surveysvc-db
+  namespace: default
+  labels:
+    app: surveysvc-db
+spec:
+  serviceName: surveysvc-db
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: surveysvc-db
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: surveysvc-db
+    spec:
+      containers:
+        - name: surveysvc-db
+          image: postgres:15
+          env:
+            - name: POSTGRES_HOST_AUTH_METHOD
+              value: trust
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: postgres
+            - name: POSTGRES_DB
+              value: datab
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: db-data
+              mountPath: /var/lib/postgresql/data
+          lifecycle:
+            preStop:
+              exec:
+                command: ["/bin/sh", "-c", "pg_ctl -D /var/lib/surveysvc/pgdata -w -t 60 -m fast stop"]
+      volumes:
+        - name: db-data
+          hostPath:
+            path: /var/lib/surveysvc/pgdata
+            type: DirectoryOrCreate

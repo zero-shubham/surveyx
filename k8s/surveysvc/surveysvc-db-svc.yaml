@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: surveysvc-db
+spec:
+  selector:
+    app.kubernetes.io/name: surveysvc-db
+  ports:
+    - protocol: TCP
+      port: 30544
+      targetPort: 5432
+  type: ClusterIP 

@@ -6,7 +6,7 @@ metadata:
     app: apigw
 data:
   krakend.json: |
-    {
+      {
       "version": 3,
        "plugin": {
         "pattern": ".so",
@@ -45,7 +45,6 @@ data:
                 "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
             }
           },
-          "method": "POST",
           "input_query_strings": [
             "*"
           ],
@@ -81,7 +80,6 @@ data:
                 "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
             }
           },
-          "method": "POST",
           "input_query_strings": [
             "*"
           ],
@@ -117,7 +115,6 @@ data:
                 "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
             }
           },
-          "method": "POST",
           "input_query_strings": [
             "*"
           ],
@@ -166,6 +163,118 @@ data:
               "method":"POST"
             }
           ]
+        },
+        {
+          "endpoint": "/v1/question-mappings",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "create:question-mappings"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+          },
+          "method": "POST",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend":[
+            {
+              "host": ["http://surveysvc:50052"],
+              "url_pattern": "/v1/question-mappings",
+              "method":"POST"
+            }
+          ]
+        },
+        {
+          "endpoint": "/v1/question-mappings",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "read:question-mappings"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+          },
+          "method": "GET",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend":[
+            {
+              "host": ["http://surveysvc:50052"],
+              "url_pattern": "/v1/question-mappings",
+              "method":"GET"
+            }
+          ]
+        },
+        {
+          "endpoint": "/v1/question-mappings",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "update:question-mappings"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+          },
+          "method": "PATCH",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend":[
+            {
+              "host": ["http://surveysvc:50052"],
+              "url_pattern": "/v1/question-mappings/:id",
+              "method":"PATCH"
+            }
+          ]
+        },
+        {
+          "endpoint": "/v1/answers",
+          "extra_config": {
+            "auth/validator": {
+                "alg": "HS256",
+                "audience": ["surveyx_api_gateway"],
+                "scopes": ["*:*", "read:answers"],
+                "cache": false,
+                "disable_jwk_security": true,
+                "operation_debug": true,
+                "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+            }
+          },
+          "method": "GET",
+          "input_query_strings": [
+            "*"
+          ],
+          "input_headers": [
+            "*"
+          ],
+          "backend":[
+            {
+              "host": ["http://surveysvc:50052"],
+              "url_pattern": "/v1/answers",
+              "method":"GET"
+            }
+          ]
         }
       ],
       "extra_config": {
@@ -185,7 +294,7 @@ data:
           "stdout": true
         }
       }
-    }
+      }
 
 ---
 apiVersion: v1

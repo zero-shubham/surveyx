@@ -5,3 +5,4 @@ resources:
   - apigw/
   - orgsvc/
   - authsvc/
+  - surveysvc/
