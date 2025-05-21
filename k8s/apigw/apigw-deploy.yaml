@@ -19,7 +19,10 @@ spec:
           image: krakend:2.9.4
           ports:
             - containerPort: 8080
-          args: ["run", "-c", "/etc/krakend/krakend.json"]
+          args: ['run', '-c', '/etc/krakend/krakend.json']
+          env:
+            - name: KAFKA_BROKERS
+              value: 'surveysvc-broker:9092'
           volumeMounts:
             - name: krakend-config
               mountPath: /etc/krakend
@@ -27,7 +30,33 @@ spec:
               mountPath: /etc/krakend/jwk
             - name: krakend-plugin
               mountPath: /etc/krakend/plugin
-              
+      initContainers:
+        - name: apigw-sleep
+          image: busybox
+          command: ['/bin/sh', '-c']
+          args:
+          - |
+            HOST="surveysvc-broker"
+            PORT="9092"
+            SLEEP_TIME=5 # seconds
+
+            echo "Pinging $HOST:$PORT until successful..."
+
+            while true; do
+                echo "Attempting to connect to $HOST:$PORT..."
+                # Using -w 1 for a 1-second timeout for each nc attempt to prevent hanging
+                nc -z -w 1 $HOST $PORT
+                
+                if [ $? -eq 0 ]; then
+                    echo "Successfully connected to $HOST:$PORT!"
+                    break # Exit the loop if connection succeeds
+                else
+                    echo "Connection to $HOST:$PORT failed. Retrying in $SLEEP_TIME seconds..."
+                    sleep $SLEEP_TIME
+                fi
+            done
+            echo "Init container finished, main application will start."
+
       volumes:
         - name: krakend-config
           configMap:

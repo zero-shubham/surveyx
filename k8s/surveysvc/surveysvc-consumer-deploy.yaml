@@ -31,9 +31,9 @@ spec:
               value: 'surveyx-answers-consumers'
           ports:
             - containerPort: 50055
-              name: "http-port"
-          command: ["/bin/sh","-c"]
-          args: ["go run ./cmd/consumer/main.go"]
+              name: 'http-port'
+          command: ['/bin/sh', '-c']
+          args: ['go run ./cmd/consumer/main.go']
 
       # initContainers:
       #   - name: surveysvc-migrate
@@ -42,4 +42,4 @@ spec:
       #       - name: DATABASE_URL
       #         value: 'postgresql://postgres:postgres@surveysvc-db:30544/datab?sslmode=disable'
       #     args:
-      #       ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up'] 
+      #       ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up']

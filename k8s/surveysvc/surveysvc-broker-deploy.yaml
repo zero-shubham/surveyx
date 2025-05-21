@@ -43,16 +43,14 @@ spec:
               value: '0'
             - name: KAFKA_NUM_PARTITIONS
               value: '3'
+            - name: CLUSTER_ID
+              value: oh-sxaDRTcyAr6pFRbXyzA
           ports:
             - containerPort: 9092
             - containerPort: 9093
           volumeMounts:
             - name: broker-data
               mountPath: /tmp
-          lifecycle:
-            preStop:
-              exec:
-                command: ["/bin/sh", "-c", "pg_ctl -D /var/lib/surveysvc/pgdata -w -t 60 -m fast stop"]
       volumes:
         - name: broker-data
           emptyDir:

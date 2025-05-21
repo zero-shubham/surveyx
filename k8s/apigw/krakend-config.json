@@ -491,6 +491,38 @@
           "method": "GET"
         }
       ]
+    },
+    {
+      "endpoint": "/v1/answers",
+      "extra_config": {
+        "auth/validator": {
+          "alg": "HS256",
+          "audience": ["surveyx_api_gateway"],
+          "scopes": ["*:*", "create:answers"],
+          "cache": false,
+          "disable_jwk_security": true,
+          "operation_debug": true,
+          "jwk_local_path": "/etc/krakend/jwk/symmetric.json"
+        },
+        "backend/pubsub/publisher": {
+          "topic_url": "surveyx-answers"
+        }
+      },
+      "method": "POST",
+      "input_query_strings": ["*"],
+      "input_headers": ["*"],
+      "backend": [
+        {
+          "host": ["kafka://"],
+          "url_pattern": "/ignored",
+          "disable_host_sanitize": true,
+          "extra_config": {
+            "backend/pubsub/publisher": {
+              "topic_url": "surveyx-answers"
+            }
+          }
+        }
+      ]
     }
   ],
   "extra_config": {
