@@ -35,11 +35,88 @@ spec:
           command: ['/bin/sh', '-c']
           args: ['go run ./cmd/consumer/main.go']
 
-      # initContainers:
-      #   - name: surveysvc-migrate
-      #     image: localhost:32000/surveysvc-migrate:registry
-      #     env:
-      #       - name: DATABASE_URL
-      #         value: 'postgresql://postgres:postgres@surveysvc-db:30544/datab?sslmode=disable'
-      #     args:
-      #       ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up']
+      initContainers:
+        - name: surveysvc-consumer-ready
+          image: apache/kafka:latest
+          command: ["/bin/bash", "-c"]
+          args:
+            - |
+                # Configuration
+                KAFKA_BOOTSTRAP_SERVER="surveysvc-broker:9092" # Your Kafka service name and port
+                TOPIC_NAME="surveyx-answers"               # The topic to check/create
+                PARTITIONS=3                                 # Desired partitions
+                REPLICATION_FACTOR=1                         # Desired replication factor
+                SLEEP_TIME=5
+                MAX_ATTEMPTS=60
+                ATTEMPT_COUNT=0
+
+                echo "Preparing Kafka topic '$TOPIC_NAME' on $KAFKA_BOOTSTRAP_SERVER..."
+
+                # 1. Attempt to create the topic if it doesn't exist
+                echo "Attempting to create topic '$TOPIC_NAME' (if not exists) with partitions=$PARTITIONS, replication-factor=$REPLICATION_FACTOR..."
+                /opt/kafka/bin/kafka-topics.sh --bootstrap-server "$KAFKA_BOOTSTRAP_SERVER" \
+                                --create \
+                                --if-not-exists \
+                                --topic "$TOPIC_NAME" \
+                                --partitions "$PARTITIONS" \
+                                --replication-factor "$REPLICATION_FACTOR"
+                
+                CREATE_EXIT_CODE=$?
+                if [ "$CREATE_EXIT_CODE" -ne 0 ]; then
+                    echo "WARNING: Topic creation command failed (exit code $CREATE_EXIT_CODE). Check Kafka broker logs for details. Continuing to readiness check..."
+                fi
+
+                echo "Waiting for Kafka topic '$TOPIC_NAME' to be ready and have no unavailable partitions..."
+
+                # 2. Loop to check topic readiness and unavailable/under-replicated partitions
+                while [ "$ATTEMPT_COUNT" -lt "$MAX_ATTEMPTS" ]; do
+                    ATTEMPT_COUNT=$((ATTEMPT_COUNT + 1))
+                    echo "Attempt $ATTEMPT_COUNT/$MAX_ATTEMPTS: Describing topic '$TOPIC_NAME' for readiness..."
+
+                    TOPIC_INFO=$(/opt/kafka/bin/kafka-topics.sh --bootstrap-server "$KAFKA_BOOTSTRAP_SERVER" --describe --topic "$TOPIC_NAME" 2>&1)
+                    DESCRIBE_EXIT_CODE=$?
+
+                    if [ "$DESCRIBE_EXIT_CODE" -ne 0 ]; then
+                        echo "Kafka describe command failed (exit code $DESCRIBE_EXIT_CODE). Output: $TOPIC_INFO"
+                        echo "Retrying in $SLEEP_TIME seconds..."
+                        sleep "$SLEEP_TIME"
+                        continue
+                    fi
+
+                    if ! echo "$TOPIC_INFO" | grep -q "Topic: $TOPIC_NAME"; then
+                        echo "Topic '$TOPIC_NAME' not found in describe output (might be new/propagating). Output: $TOPIC_INFO"
+                        echo "Retrying in $SLEEP_TIME seconds..."
+                        sleep "$SLEEP_TIME"
+                        continue
+                    fi
+
+                    # Check for Leader: -1 or Leader: None
+                    if echo "$TOPIC_INFO" | grep -E -q "Leader: -1|Leader: [Nn][Oo][Nn][Ee]"; then
+                        echo "Topic '$TOPIC_NAME' has unavailable partitions (leader not elected). Output: $TOPIC_INFO"
+                        echo "Retrying in $SLEEP_TIME seconds..."
+                        sleep "$SLEEP_TIME"
+                        continue
+                    fi
+
+                    # Check for "UnderReplicatedPartitions" (implies problem with ISRs)
+                    # This line appears in --describe output when there are under-replicated partitions.
+                    if echo "$TOPIC_INFO" | grep -q "UnderReplicatedPartitions:"; then
+                        echo "Topic '$TOPIC_NAME' has under-replicated partitions. Output: $TOPIC_INFO"
+                        echo "Retrying in $SLEEP_TIME seconds..."
+                        sleep "$SLEEP_TIME"
+                        continue
+                    fi
+                    
+                    # If all checks pass
+                    echo "Kafka topic '$TOPIC_NAME' is ready and healthy! Details:"
+                    echo "$TOPIC_INFO"
+                    break # Exit the loop
+                done
+
+                # 3. Final status check
+                if [ "$ATTEMPT_COUNT" -ge "$MAX_ATTEMPTS" ]; then
+                    echo "ERROR: Timed out waiting for Kafka topic '$TOPIC_NAME' after $MAX_ATTEMPTS attempts."
+                    exit 1 # Fail the initContainer
+                else
+                    echo "Kafka topic readiness and health check completed successfully."
+                fi

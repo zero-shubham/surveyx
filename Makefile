@@ -11,3 +11,6 @@ logs:
 
 pods:
 	microk8s kubectl get pods
+
+apply:
+	microk8s kubectl apply -k k8s/
