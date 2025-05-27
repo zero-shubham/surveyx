@@ -16,24 +16,39 @@ spec:
     spec:
       containers:
         - name: authsvc
-          image: localhost:32000/authsvc:registry
+          image: localhost:32000/authsvc:latest
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
               value: 'postgresql://postgres:postgres@authsvc-db:30543/datab'
             - name: SUPERADMIN_EMAIL
-              value: "superadmin@surveyx.com"
+              value: 'superadmin@surveyx.com'
             - name: SUPERADMIN_PASS
-              value: "123456"
+              value: '123456'
             - name: JWT_SIGN_KEY
-              value: "asdfwefasvdfg123sdfg34asg"
+              value: 'asdfwefasvdfg123sdfg34asg'
+            - name: OLTP_HTTP_ENDPOINT
+              value: 'localhost:4318'
           ports:
             - containerPort: 50050
-              name: "grpc-port"
+              name: 'grpc-port'
             - containerPort: 50051
-              name: "jwk-port"
-          command: ["/bin/sh","-c"]
-          args: ["go run ./cmd/seed/main.go; sleep 10; go run ./cmd/server/main.go"]
+              name: 'jwk-port'
+          command: ['/bin/sh', '-c']
+          args:
+            ['go run ./cmd/seed/main.go; sleep 10; go run ./cmd/server/main.go']
+
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:latest
+          args: ['--config=/etc/otelcol-contrib/config.yaml']
+          volumeMounts:
+            - name: otel-collector-config
+              mountPath: /etc/otelcol-contrib/
+          ports:
+            - containerPort: 4318
+          env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT
+              value: '10s'
 
       initContainers:
         - name: authsvc-migrate
@@ -43,3 +58,8 @@ spec:
               value: 'postgresql://postgres:postgres@authsvc-db:30543/datab?sslmode=disable'
           args:
             ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up']
+
+      volumes:
+        - name: otel-collector-config
+          configMap:
+            name: otel-collector-config

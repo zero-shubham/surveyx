@@ -29,6 +29,10 @@ spec:
               value: 'surveyx-answers-dead'
             - name: KAFKA_CONSUMER_GROUP
               value: 'surveyx-answers-consumers'
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
           ports:
             - containerPort: 50055
               name: 'http-port'

@@ -1,44 +1,43 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
-  name: apigw
+  name: jaeger
   namespace: default
   labels:
-    app: apigw
+    app: jaeger
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: apigw
+      app.kubernetes.io/name: jaeger
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: apigw
+        app.kubernetes.io/name: jaeger
     spec:
       containers:
-        - name: apigw
-          image: krakend:2.9.4
-          ports:
-            - containerPort: 8080
-          args: ['run', '-c', '/etc/krakend/krakend.json']
+        - name: jaeger
+          image: jaegertracing/all-in-one:latest
           env:
-            - name: KAFKA_BROKERS
-              value: 'surveysvc-broker:9092'
-          volumeMounts:
-            - name: krakend-config
-              mountPath: /etc/krakend
-            - name: krakend-jwk
-              mountPath: /etc/krakend/jwk
-            - name: krakend-plugin
-              mountPath: /etc/krakend/plugin
+            - name: SPAN_STORAGE_TYPE
+              value: elasticsearch
+          ports:
+            - containerPort: 16686
+            - containerPort: 4317
+            - containerPort: 4318
+          args:
+            - '--es.server-urls=http://elasticsearch:9200'
+            - '--es.num-shards=1'
+            - '--es.num-replicas=0'
+            - '--log-level=error'
 
       initContainers:
-        - name: apigw-sleep
+        - name: jaeger-sleep
           image: busybox
           command: ['/bin/sh', '-c']
           args:
             - |
-              HOST="surveysvc-broker"
-              PORT="9092"
+              HOST="elasticsearch"
+              PORT="9200"
               SLEEP_TIME=5 # seconds
 
               echo "Pinging $HOST:$PORT until successful..."
@@ -57,15 +56,3 @@ spec:
                   fi
               done
               echo "Init container finished, main application will start."
-
-      volumes:
-        - name: krakend-config
-          configMap:
-            name: krakend-config
-        - name: krakend-jwk
-          configMap:
-            name: krakend-jwk
-        - name: krakend-plugin
-          hostPath:
-            path: /home/zero/Documents/code/surveyx/surveyx-apigw/
-            type: Directory

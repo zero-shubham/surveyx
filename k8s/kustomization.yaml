@@ -6,3 +6,4 @@ resources:
   - orgsvc/
   - authsvc/
   - apigw/
+  - otel/

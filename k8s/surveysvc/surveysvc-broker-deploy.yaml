@@ -6,7 +6,6 @@ metadata:
   labels:
     app: surveysvc-broker
 spec:
-  serviceName: surveysvc-broker
   selector:
     matchLabels:
       app.kubernetes.io/name: surveysvc-broker

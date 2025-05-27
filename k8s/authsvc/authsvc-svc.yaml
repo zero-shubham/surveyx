@@ -14,5 +14,9 @@ spec:
       port: 50051
       targetPort: 50051
       name: "jwk-port"
+    - protocol: TCP
+      port: 9464
+      targetPort: 9464
+      name: '9464'
   type: ClusterIP
 

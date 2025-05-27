@@ -34,7 +34,12 @@ spec:
           lifecycle:
             preStop:
               exec:
-                command: ["/bin/sh", "-c", "pg_ctl -D /var/lib/authsvc/pgdata -w -t 60 -m fast stop"]
+                command:
+                  [
+                    '/bin/sh',
+                    '-c',
+                    'pg_ctl -D /var/lib/authsvc/pgdata -w -t 60 -m fast stop',
+                  ]
       volumes:
         - name: db-data
           hostPath:

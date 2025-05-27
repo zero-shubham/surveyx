@@ -531,6 +531,19 @@ data:
               }
             }
           ]
+        },
+        {
+          "endpoint": "/v1/traces",
+          "extra_config": {},
+          "method": "GET",
+          "input_query_strings": ["*"],
+          "input_headers": ["*"],
+          "backend": [
+            {
+              "host": ["http://jaeger:16686"],
+              "method": "GET"
+            }
+          ]
         }
       ],
       "extra_config": {
@@ -551,6 +564,7 @@ data:
         }
       }
     }
+
 
 
 

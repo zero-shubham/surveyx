@@ -6,7 +6,6 @@ metadata:
   labels:
     app: surveysvc-db
 spec:
-  serviceName: surveysvc-db
   selector:
     matchLabels:
       app.kubernetes.io/name: surveysvc-db

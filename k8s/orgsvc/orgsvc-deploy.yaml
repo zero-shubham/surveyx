@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: orgsvc
-          image: localhost:32000/orgsvc:registry
+          image: localhost:32000/orgsvc:latest
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
@@ -29,5 +29,25 @@ spec:
               value: 'otlp'
             - name: OTEL_LOGS_EXPORTER
               value: 'console,otlp'
+            - name: OLTP_HTTP_TRACE_ENDPOINT
+              value: 'http://localhost:4318/v1/traces'
+            - name: OLTP_HTTP_METER_ENDPOINT
+              value: 'http://localhost:4318/v1/metrics'
           ports:
             - containerPort: 8000
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:latest
+          args: ['--config=/etc/otelcol-contrib/config.yaml']
+          volumeMounts:
+            - name: otel-collector-config
+              mountPath: /etc/otelcol-contrib/
+          ports:
+            - containerPort: 4318
+            - containerPort: 9464
+          env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT
+              value: '10s'
+      volumes:
+        - name: otel-collector-config
+          configMap:
+            name: otel-collector-config

@@ -5,4 +5,6 @@ resources:
   - orgsvc-db-deploy.yaml
   - orgsvc-db-svc.yaml
   - orgsvc-deploy.yaml
+  - orgsvc-config.yaml
   - orgsvc-svc.yaml
+
