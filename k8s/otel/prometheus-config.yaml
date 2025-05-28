@@ -16,3 +16,11 @@ data:
       - job_name: 'authsvc-otel-collector'
         static_configs:
           - targets: ['authsvc:9464']
+        
+      - job_name: 'surveysvc-otel-collector'
+        static_configs:
+          - targets: ['surveysvc:9464']
+      
+      - job_name: 'surveysvc-cons-otel-collector'
+        static_configs:
+          - targets: ['surveysvc-consumer:9464']

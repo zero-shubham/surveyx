@@ -1,15 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: surveysvc
+  name: surveysvc-consumer
 spec:
   selector:
-    app.kubernetes.io/name: surveysvc
+    app.kubernetes.io/name: surveysvc-consumer
   ports:
-    - protocol: TCP
-      port: 50052
-      targetPort: 50052
-      name: "http-port"
     - protocol: TCP
       port: 9464
       targetPort: 9464
