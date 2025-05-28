@@ -31,6 +31,19 @@ spec:
             - name: krakend-plugin
               mountPath: /etc/krakend/plugin
 
+        - name: otel-collector
+          image: otel/opentelemetry-collector-contrib:latest
+          args: ['--config=/etc/otelcol-contrib/config.yaml']
+          volumeMounts:
+            - name: otel-collector-config
+              mountPath: /etc/otelcol-contrib/
+          ports:
+            - containerPort: 4318
+            - containerPort: 9464
+          env:
+            - name: OTEL_EXPORTER_OTLP_TRACES_TIMEOUT
+              value: '10s'
+
       initContainers:
         - name: apigw-sleep
           image: busybox
@@ -59,6 +72,9 @@ spec:
               echo "Init container finished, main application will start."
 
       volumes:
+        - name: otel-collector-config
+          configMap:
+            name: otel-collector-config
         - name: krakend-config
           configMap:
             name: krakend-config

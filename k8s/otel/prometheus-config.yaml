@@ -24,3 +24,7 @@ data:
       - job_name: 'surveysvc-cons-otel-collector'
         static_configs:
           - targets: ['surveysvc-consumer:9464']
+      
+      - job_name: 'apigw-otel-collector'
+        static_configs:
+          - targets: ['apigw-prom:9464']

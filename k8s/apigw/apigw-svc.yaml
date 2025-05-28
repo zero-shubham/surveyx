@@ -10,3 +10,18 @@ spec:
       port: 8080
       nodePort: 30080
   type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: apigw-prom
+spec:
+  selector:
+    app.kubernetes.io/name: apigw
+  ports:
+    - protocol: TCP
+      port: 9464
+      targetPort: 9464
+      name: '9464'
+  type: ClusterIP

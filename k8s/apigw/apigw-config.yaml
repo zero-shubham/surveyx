@@ -531,22 +531,23 @@ data:
               }
             }
           ]
-        },
-        {
-          "endpoint": "/v1/traces",
-          "extra_config": {},
-          "method": "GET",
-          "input_query_strings": ["*"],
-          "input_headers": ["*"],
-          "backend": [
-            {
-              "host": ["http://jaeger:16686"],
-              "method": "GET"
-            }
-          ]
         }
       ],
       "extra_config": {
+        "telemetry/opentelemetry": {
+          "service_name": "apigw",
+          "exporters": {
+            "otlp": [
+              {
+                "name": "oltp_collector",
+                "host": "localhost",
+                "port": 4317,
+                "use_http": false,
+                "disable_metrics": false
+              }
+            ]
+          }
+        },
         "router": {
           "return_error_msg": true
         },
@@ -564,10 +565,6 @@ data:
         }
       }
     }
-
-
-
-
 
 ---
 apiVersion: v1
