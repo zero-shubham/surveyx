@@ -1,0 +1,74 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: filebeat
+  namespace: default
+  labels:
+    app: filebeat
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: filebeat
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: filebeat
+    spec:
+      serviceAccountName: filebeat-sa # Link to the ServiceAccount
+      terminationGracePeriodSeconds: 30
+      # hostNetwork: true # Often needed for connectivity
+
+      # Tolerations to allow running on tainted nodes (e.g., master/control-plane)
+      tolerations:
+        - key: node-role.kubernetes.io/master
+          effect: NoSchedule
+        - key: node-role.kubernetes.io/control-plane
+          effect: NoSchedule
+        - key: CriticalAddonsOnly
+          operator: Exists
+      containers:
+        - name: filebeat
+          image: docker.elastic.co/beats/filebeat:8.15.0
+          command: ['filebeat']
+          args: ['-e', '-strict.perms=false']
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          securityContext:
+            runAsUser: 0
+          volumeMounts:
+            - name: filebeat-data
+              mountPath: /usr/share/filebeat/data
+            - name: varlogcontainers # Mount standard container log path
+              mountPath: /var/log/containers
+              readOnly: true
+            - name: varlibdockercontainers # Mount Docker's specific log path
+              mountPath: /var/lib/docker/containers
+              readOnly: true
+            - name: varlogpods # You already had this, keep it
+              mountPath: /var/log/pods
+              readOnly: true
+            - name: filebeat-config # Mount the ConfigMap as a file
+              mountPath: /usr/share/filebeat/filebeat.yml
+              subPath: filebeat.yml # Point to the specific file within the ConfigMap
+              readOnly: true
+
+      volumes:
+        - name: varlogcontainers
+          hostPath:
+            path: /var/log/containers
+        - name: varlibdockercontainers
+          hostPath:
+            path: /var/lib/docker/containers
+        - name: varlogpods
+          hostPath:
+            path: /var/log/pods
+        - name: filebeat-data
+          hostPath:
+            path: /var/lib/filebeat-data # This path will be created on the host if it doesn't exist
+            type: DirectoryOrCreate
+        - name: filebeat-config
+          configMap:
+            name: filebeat-config

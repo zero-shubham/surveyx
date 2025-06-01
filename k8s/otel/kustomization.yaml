@@ -9,3 +9,8 @@ resources:
   - prometheus-config.yaml
   - prometheus-deploy.yaml
   - prometheus-svc.yaml
+  - filebeat-rbac.yaml
+  - filebeat-config.yaml
+  - filebeat-deploy.yaml
+  - kibana-deploy.yaml
+  - kibana-svc.yaml

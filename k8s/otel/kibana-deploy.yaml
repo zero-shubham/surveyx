@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: kibana
+  namespace: default
+  labels:
+    app: kibana
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: kibana
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: kibana
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:8.15.1
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: http://elasticsearch:9200
+          ports:
+            - containerPort: 5601
+
+      initContainers:
+        - name: kibana-sleep
+          image: busybox
+          command: ['/bin/sh', '-c']
+          args:
+            - |
+              HOST="elasticsearch"
+              PORT="9200"
+              SLEEP_TIME=5 # seconds
+
+              echo "Pinging $HOST:$PORT until successful..."
+
+              while true; do
+                  echo "Attempting to connect to $HOST:$PORT..."
+                  # Using -w 1 for a 1-second timeout for each nc attempt to prevent hanging
+                  nc -z -w 1 $HOST $PORT
+                  
+                  if [ $? -eq 0 ]; then
+                      echo "Successfully connected to $HOST:$PORT!"
+                      break # Exit the loop if connection succeeds
+                  else
+                      echo "Connection to $HOST:$PORT failed. Retrying in $SLEEP_TIME seconds..."
+                      sleep $SLEEP_TIME
+                  fi
+              done
+              echo "Init container finished, main application will start."
