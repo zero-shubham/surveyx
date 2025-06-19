@@ -9,10 +9,12 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: orgsvc
+      app.kubernetes.io/language: python
   template:
     metadata:
       labels:
         app.kubernetes.io/name: orgsvc
+        app.kubernetes.io/language: python
     spec:
       containers:
         - name: orgsvc

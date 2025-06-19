@@ -5,6 +5,7 @@ metadata:
 spec:
   selector:
     app.kubernetes.io/name: orgsvc
+    app.kubernetes.io/language: python
   ports:
     - protocol: TCP
       port: 8000

@@ -9,29 +9,27 @@ data:
     filebeat.autodiscover:
       providers:
         - type: kubernetes
-          node: ${NODE_NAME} # Crucial: Pass NODE_NAME env var from DaemonSet
-          hints.enabled: true # Enable hints for custom parsing via pod annotations
-
-          # Default configuration for ALL containers discovered by Kubernetes autodiscover.
-          # This applies if a pod does NOT have specific Filebeat annotations (hints).
+          node: ${NODE_NAME} 
+          hints.enabled: true 
           hints.default_config:
             type: container
             paths:
               - /var/log/containers/*-${data.kubernetes.container.id}.log
+            parsers:
+              - ndjson:
+                  fields: ['log']
+                  target: ''
+                  overwrite_keys: true
             processors:
               - decode_json_fields:
                   fields: ['message']
-                  target: '' # Promote parsed JSON keys to the root of the event
-                  overwrite_keys: true # Overwrite existing fields if names conflict
-                  add_error_key: true # Add a field if JSON parsing fails, for debugging
+                  target: '' 
+                  overwrite_keys: true
+                  add_error_key: true 
                   
-    # Output to Elasticsearch
     output.elasticsearch:
-      hosts: ['elasticsearch:9200'] # Or your actual Elasticsearch service/IP/hostname
-      # username: elastic # Uncomment and configure if security is enabled
-      # password: your_elastic_password # Uncomment and configure if security is enabled
+      hosts: ['elasticsearch:9200']
 
-    # Setup for Kibana (index templates and dashboards)
     setup.kibana:
       host: 'kibana:5601' # Or your Kibana service/IP/hostname
 
@@ -43,4 +41,3 @@ data:
       name: filebeat.log
       keepfiles: 7
       permissions: 0644
-

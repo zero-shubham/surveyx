@@ -5,6 +5,7 @@ metadata:
 spec:
   selector:
     app.kubernetes.io/name: surveysvc
+    app.kubernetes.io/language: golang
   ports:
     - protocol: TCP
       port: 50052
