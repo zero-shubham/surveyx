@@ -16,15 +16,11 @@ spec:
     spec:
       containers:
         - name: authsvc
-          image: localhost:32000/authsvc:latest
+          image: ghcr.io/zero-shubham/authsvc:sha-c1b8a70
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
               value: 'postgresql://postgres:postgres@authsvc-db:30543/datab'
-            - name: SUPERADMIN_EMAIL
-              value: 'superadmin@surveyx.com'
-            - name: SUPERADMIN_PASS
-              value: '123456'
             - name: JWT_SIGN_KEY
               value: 'asdfwefasvdfg123sdfg34asg'
             - name: OLTP_HTTP_ENDPOINT
@@ -34,9 +30,7 @@ spec:
               name: 'grpc-port'
             - containerPort: 50051
               name: 'jwk-port'
-          command: ['/bin/sh', '-c']
-          args:
-            ['go run ./cmd/seed/main.go; sleep 10; go run ./cmd/server/main.go']
+          command: ['/main']
 
         - name: otel-collector
           image: otel/opentelemetry-collector-contrib:latest
@@ -52,12 +46,22 @@ spec:
 
       initContainers:
         - name: authsvc-migrate
-          image: localhost:32000/authsvc-migrate:registry
+          image: ghcr.io/zero-shubham/authsvc-migrate:sha-f89a0b5
           env:
             - name: DATABASE_URL
               value: 'postgresql://postgres:postgres@authsvc-db:30543/datab?sslmode=disable'
           args:
             ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up']
+        - name: authsvc-seed
+          image: ghcr.io/zero-shubham/authsvc:sha-fe27c43
+          env:
+            - name: DATABASE_URL
+              value: 'postgresql://postgres:postgres@authsvc-db:30543/datab?sslmode=disable'
+            - name: SUPERADMIN_EMAIL
+              value: 'superadmin@surveyx.com'
+            - name: SUPERADMIN_PASS
+              value: '123456'
+          command: ['/seed']
 
       volumes:
         - name: otel-collector-config

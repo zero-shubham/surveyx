@@ -1,6 +1,6 @@
 ## Surveyx - a platform to run and manage surveys.
 
-This a dummy project, with an intent to implement and apply my learning on k8s, terraform, OpenTelemetry. 
+This a dummy project, with an intent to implement and experiment around k8s, terraform, OpenTelemetry. 
 
 ### Objectives
 1. Use k8s to run all required services.
