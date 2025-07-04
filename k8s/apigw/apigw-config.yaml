@@ -10,7 +10,7 @@ data:
       "version": 3,
       "plugin": {
         "pattern": ".so",
-        "folder": "/etc/krakend/plugin/"
+        "folder": "/etc/krakend-plugin/"
       },
       "endpoints": [
         {

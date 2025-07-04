@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: apigw
-          image: krakend:2.9.4
+          image: ghcr.io/zero-shubham/surveyx-apigw:sha-b09808a
           ports:
             - containerPort: 8080
           args: ['run', '-c', '/etc/krakend/krakend.json']
@@ -28,8 +28,6 @@ spec:
               mountPath: /etc/krakend
             - name: krakend-jwk
               mountPath: /etc/krakend/jwk
-            - name: krakend-plugin
-              mountPath: /etc/krakend/plugin
 
         - name: otel-collector
           image: otel/opentelemetry-collector-contrib:latest
@@ -81,7 +79,3 @@ spec:
         - name: krakend-jwk
           configMap:
             name: krakend-jwk
-        - name: krakend-plugin
-          hostPath:
-            path: /home/zero/Documents/code/surveyx/surveyx-apigw/
-            type: Directory
