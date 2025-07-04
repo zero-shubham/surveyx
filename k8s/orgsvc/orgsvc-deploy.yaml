@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: orgsvc
-          image: localhost:32000/orgsvc:latest
+          image: ghcr.io/zero-shubham/orgsvc:sha-0ae92eb
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL

@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
         - name: surveysvc
-          image: localhost:32000/surveysvc:latest
+          image: ghcr.io/zero-shubham/surveysvc:sha-a4f6a3e
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
@@ -27,9 +27,8 @@ spec:
               value: 'localhost:4318'
           ports:
             - containerPort: 50052
-              name: "http-port"
-          command: ["/bin/sh","-c"]
-          args: ["go run ./cmd/server/main.go"]
+              name: 'http-port'
+          command: ['/main']
 
         - name: otel-collector
           image: otel/opentelemetry-collector-contrib:latest
@@ -45,13 +44,13 @@ spec:
 
       initContainers:
         - name: surveysvc-migrate
-          image: localhost:32000/surveysvc-migrate:registry
+          image: ghcr.io/zero-shubham/surveysvc-migrate:sha-87d97cd
           env:
             - name: DATABASE_URL
               value: 'postgresql://postgres:postgres@surveysvc-db:30544/datab?sslmode=disable'
           args:
-            ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up'] 
-      
+            ['-path', '/tmp', '-database', '$(DATABASE_URL)', '-verbose', 'up']
+
       volumes:
         - name: otel-collector-config
           configMap:

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: surveysvc-consumer
-          image: localhost:32000/surveysvc:latest
+          image: ghcr.io/zero-shubham/surveysvc-consumer:sha-a4f6a3e
           imagePullPolicy: Always
           env:
             - name: DATABASE_URL
@@ -38,8 +38,7 @@ spec:
           ports:
             - containerPort: 50055
               name: 'http-port'
-          command: ['/bin/sh', '-c']
-          args: ['go run ./cmd/consumer/main.go']
+          command: ["/consumer"]
 
         - name: otel-collector
           image: otel/opentelemetry-collector-contrib:latest
