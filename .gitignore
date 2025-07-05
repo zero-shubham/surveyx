@@ -2,8 +2,7 @@
 .vscode
 k8s-data
 
+terraform.tfstate*
 .terraform
 *.hcl
 *.tfvars
-*.tfstate.backup
-*.tfstate
