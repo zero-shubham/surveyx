@@ -6,3 +6,4 @@ k8s-data
 *.hcl
 *.tfvars
 *.tfstate.backup
+*.tfstate
