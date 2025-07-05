@@ -28,5 +28,5 @@ spec:
   ports:
     - protocol: TCP
       port: 16686
-      nodePort: 30081
-  type: NodePort
+      targetPort: 16686
+  type: LoadBalancer

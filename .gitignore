@@ -1,3 +1,8 @@
 .venv
 .vscode
 k8s-data
+
+.terraform
+*.hcl
+*.tfvars
+*.tfstate.backup

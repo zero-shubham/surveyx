@@ -8,5 +8,5 @@ spec:
   ports:
     - protocol: TCP
       port: 5601
-      nodePort: 30085
-  type: NodePort
+      targetPort: 5601
+  type: LoadBalancer
