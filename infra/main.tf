@@ -7,7 +7,7 @@ resource "vultr_kubernetes" "surveyx_k8s_cluster" {
 
   node_pools {
     node_quantity = 3
-    plan          = "vc2-4c-8gb"
+    plan          = "vc2-2c-4gb"
     label         = "surveyx"
     auto_scaler   = true
     min_nodes     = 1
