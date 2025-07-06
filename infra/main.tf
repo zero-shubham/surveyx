@@ -36,11 +36,11 @@ resource "null_resource" "save_kubeconfig" {
     EOF
   }
 
-  depends_on = [vultr_kubernetes.surveyx_k8s_cluster]
+  depends_on = [vultr_kubernetes.surveyx_k8s_cluster, wait_30_seconds]
 }
 
-resource "time_sleep" "wait_60_seconds" {
-  create_duration  = "60s"
+resource "time_sleep" "wait_30_seconds" {
+  create_duration  = "30s"
   destroy_duration = "10s"
 }
 
