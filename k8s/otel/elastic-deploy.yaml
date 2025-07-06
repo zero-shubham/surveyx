@@ -9,10 +9,24 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: elasticsearch
+
+  volumeClaimTemplates:
+    - metadata:
+        name: db-data
+        labels:
+          db: elasticsearch
+      spec:
+        accessModes: ['ReadWriteOnce']
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: vultr-block-storage
+
   template:
     metadata:
       labels:
         app.kubernetes.io/name: elasticsearch
+
     spec:
       containers:
         - name: elasticsearch
@@ -32,7 +46,3 @@ spec:
           volumeMounts:
             - name: esdata
               mountPath: /usr/share/elasticsearch/data
-      volumes:
-        - name: esdata
-          emptyDir:
-            sizeLimit: 500Mi

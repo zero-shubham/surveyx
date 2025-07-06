@@ -9,10 +9,24 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: authsvc-db
+
+  volumeClaimTemplates:
+    - metadata:
+        name: db-data
+        labels:
+          db: authsvc
+      spec:
+        accessModes: ['ReadWriteOnce']
+        resources:
+          requests:
+            storage: 10Gi
+        storageClassName: vultr-block-storage
+
   template:
     metadata:
       labels:
         app.kubernetes.io/name: authsvc-db
+
     spec:
       containers:
         - name: authsvc-db
@@ -40,8 +54,3 @@ spec:
                     '-c',
                     'pg_ctl -D /var/lib/authsvc/pgdata -w -t 60 -m fast stop',
                   ]
-      volumes:
-        - name: db-data
-          hostPath:
-            path: /var/lib/authsvc/pgdata
-            type: DirectoryOrCreate
